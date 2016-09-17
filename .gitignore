@@ -1,3 +1,29 @@
+# Maven
+target/
+
+## Intellij
+.idea
+*.iml
+
+## Eclipse gitignore from https://github.com/github/gitignore/blob/master/Global/Eclipse.gitignore
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.project
+.externalToolBuilders/
+*.launch
+*.pydevproject
+.classpath
+
+## Auto-generated github .gitignore for Java:
 *.class
 
 # Mobile Tools for Java (J2ME)

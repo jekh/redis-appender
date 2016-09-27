@@ -5,7 +5,10 @@ import org.jekh.appenders.Defaults;
 import org.jekh.appenders.Field;
 import org.jekh.appenders.FieldNamesBuilder;
 import org.jekh.appenders.LogstashJsonFormatter;
+import org.jekh.appenders.exception.ExceptionUtil;
+import org.jekh.appenders.exception.LoggerInitializationError;
 import org.jekh.appenders.gson.GsonUtil;
+import org.jekh.appenders.log.SimpleLog;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,11 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     private LogstashJsonFormatter jsonLayout;
 
     private volatile boolean configured = false;
+
+    /**
+     * Configuration failed due to an exception.
+     */
+    private volatile boolean configFailed = false;
 
     private boolean locationAsObject = Defaults.LOCATION_AS_OBJECT;
 
@@ -34,6 +42,11 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
 
     @Override
     public String format(LogRecord record) {
+        // jboss will probably swallow any exception anyway, but throwing a runtime exception is better than sending nonsense to redis
+        if (configFailed) {
+            throw new LoggerInitializationError("Cannot format log record: configuration failed.");
+        }
+
         if (!configured) {
             configure();
         }
@@ -50,7 +63,18 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
             return;
         }
 
-        jsonLayout = new LogstashJsonFormatter(fieldNamesBuilder.build(), locationAsObject, mdcAsObject, tags, additionalFields, suppressFields, mdcInclude, mdcExclude);
+        if (configFailed) {
+            throw new LoggerInitializationError("JBossLogstashFormatter configuration failed");
+        }
+
+        try {
+            jsonLayout = new LogstashJsonFormatter(fieldNamesBuilder.build(), locationAsObject, mdcAsObject, tags, additionalFields, suppressFields, mdcInclude, mdcExclude);
+        } catch (RuntimeException e) {
+            SimpleLog.warn("An error occurred while configuring the JBossLogstashFormatter. " + ExceptionUtil.getStackTraceAsString(e));
+            configFailed = true;
+
+            throw e;
+        }
 
         configured = true;
     }

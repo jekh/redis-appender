@@ -3,13 +3,21 @@ package org.jekh.appenders.jboss;
 import org.jekh.appenders.Defaults;
 import org.jekh.appenders.client.RedisClient;
 import org.jekh.appenders.client.RedisClientBuilder;
+import org.jekh.appenders.exception.ExceptionUtil;
+import org.jekh.appenders.exception.LoggerInitializationError;
 import org.jekh.appenders.jul.RedisLoggingHandler;
+import org.jekh.appenders.log.SimpleLog;
 
 import java.nio.charset.Charset;
 import java.util.logging.LogRecord;
 
 public class JBossRedisHandler extends RedisLoggingHandler {
     private volatile boolean configured = false;
+
+    /**
+     * Configuration failed due to an exception.
+     */
+    private volatile boolean configFailed = false;
 
     private String redisKey = Defaults.REDIS_KEY;
 
@@ -99,6 +107,11 @@ public class JBossRedisHandler extends RedisLoggingHandler {
 
     @Override
     public void publish(LogRecord record) {
+        // if configuration was aborted due to an error, don't even try to log anything
+        if (configFailed) {
+            return;
+        }
+
         if (!configured) {
             configure();
         }
@@ -111,26 +124,40 @@ public class JBossRedisHandler extends RedisLoggingHandler {
             return;
         }
 
-        RedisClient client = RedisClientBuilder.builder()
-                .redisKey(redisKey)
-                .host(host)
-                .port(port)
-                .timeoutMs(timeoutMs)
-                .password(password)
-                .database(database)
-                .clientName(clientName)
-                .tls(tls)
-                .threads(redisPushThreads)
-                .logQueueSize(logQueueSize)
-                .maxMessagesPerPush(maxMessagesPerPush)
-                .synchronous(synchronous)
-                .charset(charset)
-                .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
-                .workerTimeoutMs(workerTimeoutMs)
-                .debug(debug)
-                .build();
+        if (configFailed) {
+            throw new LoggerInitializationError("JBossRedisHandler configuration failed");
+        }
 
-        client.start();
+        RedisClient client;
+
+        // jboss seems to swallow exceptions that occur during configuration, so if any do occur, log them manually
+        try {
+            client = RedisClientBuilder.builder()
+                    .redisKey(redisKey)
+                    .host(host)
+                    .port(port)
+                    .timeoutMs(timeoutMs)
+                    .password(password)
+                    .database(database)
+                    .clientName(clientName)
+                    .tls(tls)
+                    .threads(redisPushThreads)
+                    .logQueueSize(logQueueSize)
+                    .maxMessagesPerPush(maxMessagesPerPush)
+                    .synchronous(synchronous)
+                    .charset(charset)
+                    .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
+                    .workerTimeoutMs(workerTimeoutMs)
+                    .debug(debug)
+                    .build();
+
+            client.start();
+        } catch (RuntimeException e) {
+            SimpleLog.warn("An error occurred while configuring the JBossRedisHandler. No logs will be sent to Redis. " + ExceptionUtil.getStackTraceAsString(e));
+            configFailed = true;
+
+            throw e;
+        }
 
         setClient(client);
 

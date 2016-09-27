@@ -3,7 +3,7 @@ package org.jekh.appenders.jul;
 import org.jekh.appenders.Defaults;
 import org.jekh.appenders.client.RedisClient;
 import org.jekh.appenders.client.RedisClientBuilder;
-import org.jekh.appenders.exception.LoggerInitializationError;
+import org.jekh.appenders.exception.LoggerInitializationException;
 import org.jekh.appenders.jul.util.JULConfigUtil;
 
 import java.nio.charset.Charset;
@@ -75,7 +75,7 @@ public class JULRedisHandler extends RedisLoggingHandler {
                 Class<?> formatterClazz = Class.forName(formatterClass);
                 formatter = (Formatter) formatterClazz.newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                throw new LoggerInitializationError("Could not initialize formatter class: " + formatterClass, e);
+                throw new LoggerInitializationException("Could not initialize formatter class: " + formatterClass, e);
             }
         } else {
             formatter = new JULLogstashFormatter();

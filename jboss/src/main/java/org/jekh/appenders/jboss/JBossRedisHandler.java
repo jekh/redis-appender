@@ -4,7 +4,7 @@ import org.jekh.appenders.Defaults;
 import org.jekh.appenders.client.RedisClient;
 import org.jekh.appenders.client.RedisClientBuilder;
 import org.jekh.appenders.exception.ExceptionUtil;
-import org.jekh.appenders.exception.LoggerInitializationError;
+import org.jekh.appenders.exception.LoggerInitializationException;
 import org.jekh.appenders.jul.RedisLoggingHandler;
 import org.jekh.appenders.log.SimpleLog;
 
@@ -125,7 +125,7 @@ public class JBossRedisHandler extends RedisLoggingHandler {
         }
 
         if (configFailed) {
-            throw new LoggerInitializationError("JBossRedisHandler configuration failed");
+            throw new LoggerInitializationException("JBossRedisHandler configuration failed");
         }
 
         RedisClient client;

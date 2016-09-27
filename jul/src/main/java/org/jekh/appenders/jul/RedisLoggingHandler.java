@@ -1,7 +1,7 @@
 package org.jekh.appenders.jul;
 
 import org.jekh.appenders.client.RedisClient;
-import org.jekh.appenders.exception.LoggerInitializationError;
+import org.jekh.appenders.exception.LoggerInitializationException;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
@@ -23,12 +23,12 @@ public abstract class RedisLoggingHandler extends java.util.logging.Handler {
     @Override
     public void publish(LogRecord record) {
         if (client == null) {
-            throw new LoggerInitializationError("Redis client must be initialized before publishing events to redis");
+            throw new LoggerInitializationException("Redis client must be initialized before publishing events to redis");
         }
 
         Formatter formatter = getFormatter();
         if (formatter == null) {
-            throw new LoggerInitializationError("Formatter must be initialized before publishing events to redis");
+            throw new LoggerInitializationException("Formatter must be initialized before publishing events to redis");
         }
 
         String append = formatter.format(record);

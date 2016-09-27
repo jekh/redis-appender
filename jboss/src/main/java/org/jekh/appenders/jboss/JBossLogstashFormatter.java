@@ -6,7 +6,7 @@ import org.jekh.appenders.Field;
 import org.jekh.appenders.FieldNamesBuilder;
 import org.jekh.appenders.LogstashJsonFormatter;
 import org.jekh.appenders.exception.ExceptionUtil;
-import org.jekh.appenders.exception.LoggerInitializationError;
+import org.jekh.appenders.exception.LoggerInitializationException;
 import org.jekh.appenders.gson.GsonUtil;
 import org.jekh.appenders.log.SimpleLog;
 
@@ -44,7 +44,7 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     public String format(LogRecord record) {
         // jboss will probably swallow any exception anyway, but throwing a runtime exception is better than sending nonsense to redis
         if (configFailed) {
-            throw new LoggerInitializationError("Cannot format log record: configuration failed.");
+            throw new LoggerInitializationException("Cannot format log record: configuration failed.");
         }
 
         if (!configured) {
@@ -64,7 +64,7 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
         }
 
         if (configFailed) {
-            throw new LoggerInitializationError("JBossLogstashFormatter configuration failed");
+            throw new LoggerInitializationException("JBossLogstashFormatter configuration failed");
         }
 
         try {

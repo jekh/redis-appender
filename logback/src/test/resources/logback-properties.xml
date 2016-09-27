@@ -1,0 +1,18 @@
+<configuration>
+    <appender name="redis-appender" class="org.jekh.appenders.logback.LogbackRedisAppender">
+        <layout class="org.jekh.appenders.logback.LogbackLogstashLayout">
+            <additionalFieldsJson>
+                {
+                "envProperty":"${UNDEFINED_ENV_PROPERTY:-default environment property value}",
+                "sysProperty":"${SYSTEM_PROPERTY_1}",
+                "sysPropertyDefault":"${SYSTEM_PROPERTY_NOT_FOUND:-default system property value}"
+                }
+            </additionalFieldsJson>
+        </layout>
+    </appender>
+
+    <root level="trace">
+        <appender-ref ref="redis-appender"/>
+    </root>
+
+</configuration>

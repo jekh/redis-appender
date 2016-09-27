@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.0" name="org.jekh.appenders">
+    <resources>
+        <resource-root path="redis-appender-jboss-${project.version}.jar"/>
+    </resources>
+    <dependencies>
+        <module name="org.jboss.logging"/>
+        <module name="org.jboss.logmanager"/>
+        <!-- required for javax.net.ssl.SSLSocketFactory used within jedis -->
+        <module name="javax.api"/>
+    </dependencies>
+</module>

@@ -1,0 +1,8 @@
+<configuration>
+    <appender name="redis-appender" class="org.jekh.appenders.logback.LogbackRedisAppender"/>
+
+    <root level="trace">
+        <appender-ref ref="redis-appender"/>
+    </root>
+
+</configuration>

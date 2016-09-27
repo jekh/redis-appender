@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+    <Appenders>
+        <Redis name="redis-appender">
+            <LogstashLayout>
+                <suppressFieldsJson>["mdc","location","exception"]</suppressFieldsJson>
+
+                <additionalFieldsJson>
+                    {
+                    "additionalKeyOne":"@{keyOne}"
+                    }
+                </additionalFieldsJson>
+            </LogstashLayout>
+        </Redis>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="redis-appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,5 +1,7 @@
 # Maven
 target/
+#Shade plugin
+dependency-reduced-pom.xml
 
 ## Intellij
 .idea

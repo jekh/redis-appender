@@ -1,0 +1,65 @@
+<configuration>
+    <appender name="redis-appender" class="org.jekh.appenders.logback.LogbackRedisAppender">
+        <redisKey>logstash</redisKey>
+        <host>localhost</host>
+        <port>6379</port>
+        <timeoutMs>2000</timeoutMs>
+        <password/>
+        <database>0</database>
+        <clientName/>
+        <tls>false</tls>
+        <synchronous>false</synchronous>
+        <redisPushThreads>5</redisPushThreads>
+        <maxMessagesPerPush>100</maxMessagesPerPush>
+        <logQueueSize>100000</logQueueSize>
+        <charset>UTF-8</charset>
+        <debug>true</debug>
+
+        <layout class="org.jekh.appenders.logback.LogbackLogstashLayout">
+            <tagsJson>["one","2","three"]</tagsJson>
+
+            <mdcIncludeJson>["includedkey"]</mdcIncludeJson>
+            <mdcExcludeJson>["excludedkey"]</mdcExcludeJson>
+
+            <additionalFieldsJson>
+                {
+                "source":"somesource",
+                "path":"somepath",
+                "type":"sometype",
+                "host":"somehost",
+                "otherkey":"othervalue",
+                "frommdc":"MDC included value is @{includedkey} and MDC excluded value is @{excludedkey}",
+                "defaultValue":"Default @{nonexistent:-value}",
+                "noDefaultValue":"No default @{value}"
+                }
+            </additionalFieldsJson>
+
+            <mdcAsObject>true</mdcAsObject>
+            <locationAsObject>true</locationAsObject>
+            <locationDepth>0</locationDepth>
+
+            <suppressFieldsJson>[]</suppressFieldsJson>
+
+            <fieldNames>
+                <thread>theThread</thread>
+                <level>severity</level>
+                <message>logMessage</message>
+                <logger>loggerName</logger>
+                <exception>throwable</exception>
+                <location>logLocation</location>
+                <timestamp>time</timestamp>
+                <classField>className</classField>
+                <method>function</method>
+                <file>javafile</file>
+                <line>linenumber</line>
+                <tags>flags</tags>
+                <mdc>mdcProperties</mdc>
+            </fieldNames>
+        </layout>
+    </appender>
+
+    <root level="trace">
+        <appender-ref ref="redis-appender"/>
+    </root>
+
+</configuration>

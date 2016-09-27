@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+    <Appenders>
+        <Redis name="redis-appender">
+            <redisKey>logstash</redisKey>
+            <host>localhost</host>
+            <port>6379</port>
+            <timeoutMs>2000</timeoutMs>
+            <database>0</database>
+            <!-- Omitting clientName and password, since their presence results in their values being passed as
+                 empty strings, rather than null -->
+            <tls>false</tls>
+            <synchronous>false</synchronous>
+            <redisPushThreads>5</redisPushThreads>
+            <maxMessagesPerPush>100</maxMessagesPerPush>
+            <logQueueSize>100000</logQueueSize>
+            <debug>true</debug>
+
+            <LogstashLayout>
+                <charset>UTF-8</charset>
+
+                <tagsJson>["one","2","three"]</tagsJson>
+
+                <mdcIncludeJson>["includedkey"]</mdcIncludeJson>
+                <mdcExcludeJson>["excludedkey"]</mdcExcludeJson>
+
+                <additionalFieldsJson>
+                    {
+                    "source":"somesource",
+                    "path":"somepath",
+                    "type":"sometype",
+                    "host":"somehost",
+                    "otherkey":"othervalue",
+                    "frommdc":"MDC included value is @{includedkey} and MDC excluded value is @{excludedkey}",
+                    "defaultValue":"Default @{nonexistent:-value}",
+                    "noDefaultValue":"No default @{value}"
+                    }
+                </additionalFieldsJson>
+
+                <mdcAsObject>true</mdcAsObject>
+                <locationAsObject>true</locationAsObject>
+
+                <suppressFieldsJson>[]</suppressFieldsJson>
+
+                <!-- Due to the way the log4j plugins work, the 'logger' and 'file' fields must be attributes and cannot be elements,
+                     since the log4j configurer will think they are LoggerConfig and FileAppender, respectively. -->
+                <fieldNames thread="theThread"
+                            level="severity"
+                            message="logMessage"
+                            logger="loggerName"
+                            exception="throwable"
+                            location="logLocation"
+                            timestamp="time"
+                            classField="className"
+                            method="function"
+                            file="javafile"
+                            line="linenumber"
+                            tags="flags"
+                            mdc="mdcProperties"/>
+            </LogstashLayout>
+        </Redis>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="redis-appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

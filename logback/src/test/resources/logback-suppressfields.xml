@@ -1,0 +1,18 @@
+<configuration>
+    <appender name="redis-appender" class="org.jekh.appenders.logback.LogbackRedisAppender">
+        <layout class="org.jekh.appenders.logback.LogbackLogstashLayout">
+            <suppressFieldsJson>["mdc","location","exception"]</suppressFieldsJson>
+
+            <additionalFieldsJson>
+                {
+                "additionalKeyOne":"@{keyOne}"
+                }
+            </additionalFieldsJson>
+        </layout>
+    </appender>
+
+    <root level="trace">
+        <appender-ref ref="redis-appender"/>
+    </root>
+
+</configuration>

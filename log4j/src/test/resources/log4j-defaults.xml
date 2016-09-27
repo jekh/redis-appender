@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Redis name="redis-appender"/>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="redis-appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

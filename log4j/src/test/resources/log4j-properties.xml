@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug">
+    <Properties>
+        <Property name="UNDEFINED_ENV_PROPERTY">default environment property value</Property>
+        <Property name="SYSTEM_PROPERTY_1">default system property value</Property>
+        <Property name="SYSTEM_PROPERTY_NOT_FOUND">default system property value</Property>
+    </Properties>
+    <Appenders>
+        <Redis name="redis-appender">
+            <LogstashLayout>
+                <additionalFieldsJson>
+                    {
+                    "envProperty":"${env:UNDEFINED_ENV_PROPERTY}",
+                    "sysProperty":"${sys:SYSTEM_PROPERTY_1}",
+                    "sysPropertyDefault":"${sys:SYSTEM_PROPERTY_NOT_FOUND}"
+                    }
+                </additionalFieldsJson>
+            </LogstashLayout>
+        </Redis>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="redis-appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

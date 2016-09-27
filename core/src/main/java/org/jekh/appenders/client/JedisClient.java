@@ -16,9 +16,17 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class JedisClient implements RedisClient {
+    /**
+     * Unique identifier for each JedisClient instance, to allow differentiation when multiple appenders are used.
+     */
+    private static final AtomicInteger jedisClientCounter = new AtomicInteger(0);
+
+    private final int jedisClientId = jedisClientCounter.getAndIncrement();
+
     private PoolService<Jedis> jedisPool;
 
     private final byte[] redisKeyAsBytes;
@@ -189,7 +197,7 @@ public class JedisClient implements RedisClient {
             for (int threadNumber = 0; threadNumber < threads; threadNumber++) {
                 Thread thread = new Thread(pushToRedisWorker);
                 thread.setDaemon(true);
-                thread.setName("redis-logger-thread-" + threadNumber);
+                thread.setName("redis-logger-client-" + jedisClientId + "-thread-" + threadNumber);
                 thread.start();
                 asyncWorkerThreads.add(thread);
             }

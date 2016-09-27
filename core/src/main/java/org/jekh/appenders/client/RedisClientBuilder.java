@@ -118,7 +118,11 @@ public class RedisClientBuilder {
     }
 
     public RedisClientBuilder maxThreadBlockTimeMs(int maxThreadBlockTimeMs) {
-        this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+        if (maxThreadBlockTimeMs < 0) {
+            this.maxThreadBlockTimeMs = Integer.MAX_VALUE;
+        } else {
+            this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+        }
         return this;
     }
 
@@ -132,7 +136,11 @@ public class RedisClientBuilder {
     }
 
     public RedisClientBuilder workerTimeoutMs(int workerTimeoutMs) {
-        this.workerTimeoutMs = workerTimeoutMs;
+        if (workerTimeoutMs < 0) {
+            this.workerTimeoutMs = Integer.MAX_VALUE;
+        } else {
+            this.workerTimeoutMs = workerTimeoutMs;
+        }
         return this;
     }
 

@@ -26,6 +26,8 @@ public class JULRedisHandler extends RedisLoggingHandler {
     private static final String MAX_MESSAGES_PER_PUSH_PROPERTY = HANDLER_PROPERTY_BASE + ".maxMessagesPerPush";
     private static final String LOG_QUEUE_SIZE_PROPERTY = HANDLER_PROPERTY_BASE + ".logQueueSize";
     private static final String CHARSET_PROPERTY = HANDLER_PROPERTY_BASE + ".charset";
+    private static final String MAX_THREAD_BLOCK_TIME_PROPERTY = HANDLER_PROPERTY_BASE + ".maxThreadBlockTimeMs";
+    private static final String WORKER_TIMEOUT_PROPERTY = HANDLER_PROPERTY_BASE + ".workerTimeoutMs";
     private static final String DEBUG_PROPERTY = HANDLER_PROPERTY_BASE + ".debug";
 
     private static final String FORMATTER_PROPERTY = HANDLER_PROPERTY_BASE + ".formatter";
@@ -56,6 +58,8 @@ public class JULRedisHandler extends RedisLoggingHandler {
         int maxMessagesPerPush = JULConfigUtil.getIntProperty(MAX_MESSAGES_PER_PUSH_PROPERTY, Defaults.MAX_MESSAGES_PER_PUSH);
         int logQueueSize = JULConfigUtil.getIntProperty(LOG_QUEUE_SIZE_PROPERTY, Defaults.LOG_QUEUE_SIZE);
         boolean debug = JULConfigUtil.getBooleanProperty(DEBUG_PROPERTY, false);
+        int maxThreadBlockTimeMs = JULConfigUtil.getIntProperty(MAX_MESSAGES_PER_PUSH_PROPERTY, Defaults.MAX_THREAD_BLOCK_TIME_MS);
+        int workerTimeoutMs = JULConfigUtil.getIntProperty(WORKER_TIMEOUT_PROPERTY, Defaults.WORKER_TIMEOUT_MS);
 
         Charset charset = Defaults.CHARSET;
         String charsetString = JULConfigUtil.getProperty(CHARSET_PROPERTY, null);
@@ -93,6 +97,8 @@ public class JULRedisHandler extends RedisLoggingHandler {
                 .maxMessagesPerPush(maxMessagesPerPush)
                 .synchronous(synchronous)
                 .charset(charset)
+                .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
+                .workerTimeoutMs(workerTimeoutMs)
                 .debug(debug)
                 .build();
 

@@ -14,6 +14,8 @@
             <redisPushThreads>5</redisPushThreads>
             <maxMessagesPerPush>100</maxMessagesPerPush>
             <logQueueSize>100000</logQueueSize>
+            <maxThreadBlockTimeMs>-1</maxThreadBlockTimeMs>
+            <workerTimeoutMs>-1</workerTimeoutMs>
             <debug>true</debug>
 
             <LogstashLayout>

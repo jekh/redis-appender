@@ -18,6 +18,8 @@ appender("redis-appenders", LogbackRedisAppender) {
     logQueueSize = 100000
     charset = "UTF-8"
     debugAppender = true
+    maxThreadBlockTimeMs = -1
+    workerTimeoutMs = -1
 
     layout(LogbackLogstashLayout) {
         tags = ["one", "2", "three"]

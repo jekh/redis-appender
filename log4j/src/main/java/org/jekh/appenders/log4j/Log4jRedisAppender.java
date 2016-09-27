@@ -33,10 +33,13 @@ public class Log4jRedisAppender extends AbstractAppender {
     private final int maxMessagesPerPush;
     private final int logQueueSize;
     private final boolean debug;
+    private final int maxThreadBlockTimeMs;
+    private final int workerTimeoutMs;
 
     protected Log4jRedisAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions,
                                  String redisKey, String host, int port, int timeoutMs, String password, int database, String clientName,
-                                 boolean tls, boolean synchronous, int redisPushThreads, int maxMessagesPerPush, int logQueueSize, boolean debug) {
+                                 boolean tls, boolean synchronous, int redisPushThreads, int maxMessagesPerPush, int logQueueSize, boolean debug,
+                                 int maxThreadBlockTimeMs, int workerTimeoutMs) {
         super(name, filter, layout, ignoreExceptions);
 
         this.redisKey = redisKey;
@@ -52,6 +55,8 @@ public class Log4jRedisAppender extends AbstractAppender {
         this.maxMessagesPerPush = maxMessagesPerPush;
         this.logQueueSize = logQueueSize;
         this.debug = debug;
+        this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+        this.workerTimeoutMs = workerTimeoutMs;
     }
 
     @PluginFactory
@@ -71,6 +76,8 @@ public class Log4jRedisAppender extends AbstractAppender {
                                                     @PluginAttribute(value = "redisPushThreads", defaultInt = Defaults.REDIS_PUSH_THREADS) int redisPushThreads,
                                                     @PluginAttribute(value = "maxMessagesPerPush", defaultInt = Defaults.MAX_MESSAGES_PER_PUSH) int maxMessagesPerPush,
                                                     @PluginAttribute(value = "logQueueSize", defaultInt = Defaults.LOG_QUEUE_SIZE) int logQueueSize,
+                                                    @PluginAttribute(value = "maxThreadBlockTimeMs", defaultInt = Defaults.MAX_THREAD_BLOCK_TIME_MS) int maxThreadBlockTimeMs,
+                                                    @PluginAttribute(value = "workerTimeoutMs", defaultInt = Defaults.WORKER_TIMEOUT_MS) int workerTimeoutMs,
                                                     @PluginAttribute(value = "debug") boolean debug
     ) {
 
@@ -83,7 +90,9 @@ public class Log4jRedisAppender extends AbstractAppender {
             layout = Log4jLogstashLayout.newBuilder().build();
         }
 
-        return new Log4jRedisAppender(name, filter, layout, ignoreExceptions, redisKey, host, port, timeoutMs, password, database, clientName, tls, synchronous, redisPushThreads, maxMessagesPerPush, logQueueSize, debug);
+        return new Log4jRedisAppender(name, filter, layout, ignoreExceptions, redisKey, host, port, timeoutMs, password,
+                database, clientName, tls, synchronous, redisPushThreads, maxMessagesPerPush, logQueueSize, debug,
+                maxThreadBlockTimeMs, workerTimeoutMs);
     }
 
 
@@ -113,6 +122,8 @@ public class Log4jRedisAppender extends AbstractAppender {
                 .synchronous(synchronous)
                 // for log4j, charset is handled in the layout instead of the appender
                 .debug(debug)
+                .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
+                .workerTimeoutMs(workerTimeoutMs)
                 .build();
 
         client.start();

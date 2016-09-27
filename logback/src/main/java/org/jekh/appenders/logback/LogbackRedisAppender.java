@@ -43,6 +43,9 @@ public class LogbackRedisAppender extends UnsynchronizedAppenderBase<ILoggingEve
 
     private boolean debug = false;
 
+    private int maxThreadBlockTimeMs = Defaults.MAX_THREAD_BLOCK_TIME_MS;
+    private int workerTimeoutMs = Defaults.WORKER_TIMEOUT_MS;
+
     public String getRedisKey() {
         return redisKey;
     }
@@ -170,6 +173,22 @@ public class LogbackRedisAppender extends UnsynchronizedAppenderBase<ILoggingEve
         this.debug = debug;
     }
 
+    public int getMaxThreadBlockTimeMs() {
+        return maxThreadBlockTimeMs;
+    }
+
+    public void setMaxThreadBlockTimeMs(int maxThreadBlockTimeMs) {
+        this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+    }
+
+    public int getWorkerTimeoutMs() {
+        return workerTimeoutMs;
+    }
+
+    public void setWorkerTimeoutMs(int workerTimeoutMs) {
+        this.workerTimeoutMs = workerTimeoutMs;
+    }
+
     @Override
     protected void append(ILoggingEvent eventObject) {
         String append = layout.doLayout(eventObject);
@@ -196,6 +215,8 @@ public class LogbackRedisAppender extends UnsynchronizedAppenderBase<ILoggingEve
                 .synchronous(synchronous)
                 .charset(charset)
                 .debug(debug)
+                .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
+                .workerTimeoutMs(workerTimeoutMs)
                 .build();
 
         client.start();

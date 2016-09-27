@@ -14,6 +14,8 @@
         <logQueueSize>100000</logQueueSize>
         <charset>UTF-8</charset>
         <debug>true</debug>
+        <maxThreadBlockTimeMs>-1</maxThreadBlockTimeMs>
+        <workerTimeoutMs>-1</workerTimeoutMs>
 
         <layout class="org.jekh.appenders.logback.LogbackLogstashLayout">
             <tagsJson>["one","2","three"]</tagsJson>

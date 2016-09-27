@@ -27,6 +27,8 @@ public class JBossRedisHandler extends RedisLoggingHandler {
     private int logQueueSize = Defaults.LOG_QUEUE_SIZE;
     private Charset charset = Defaults.CHARSET;
     private boolean debug = false;
+    private int maxThreadBlockTimeMs = Defaults.MAX_THREAD_BLOCK_TIME_MS;
+    private int workerTimeoutMs = Defaults.WORKER_TIMEOUT_MS;
 
     public void setRedisKey(String redisKey) {
         this.redisKey = redisKey;
@@ -84,6 +86,14 @@ public class JBossRedisHandler extends RedisLoggingHandler {
         this.charset = Charset.forName(charset);
     }
 
+    public void setMaxThreadBlockTimeMs(int maxThreadBlockTimeMs) {
+        this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+    }
+
+    public void setWorkerTimeoutMs(int workerTimeoutMs) {
+        this.workerTimeoutMs = workerTimeoutMs;
+    }
+
     public JBossRedisHandler() {
     }
 
@@ -115,6 +125,8 @@ public class JBossRedisHandler extends RedisLoggingHandler {
                 .maxMessagesPerPush(maxMessagesPerPush)
                 .synchronous(synchronous)
                 .charset(charset)
+                .maxThreadBlockTimeMs(maxThreadBlockTimeMs)
+                .workerTimeoutMs(workerTimeoutMs)
                 .debug(debug)
                 .build();
 

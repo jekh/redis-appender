@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>redis-appender</artifactId>
-        <groupId>org.jekh.appender</groupId>
+        <groupId>org.jekh.appenders</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,12 +13,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jekh.appender</groupId>
+            <groupId>org.jekh.appenders</groupId>
             <artifactId>redis-appender-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jekh.appender</groupId>
+            <groupId>org.jekh.appenders</groupId>
             <artifactId>redis-appender-jul</artifactId>
             <version>${project.version}</version>
         </dependency>

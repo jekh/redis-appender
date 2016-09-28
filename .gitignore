@@ -2,6 +2,7 @@
 target/
 #Shade plugin
 dependency-reduced-pom.xml
+*.versionsBackup
 
 ## Intellij
 .idea

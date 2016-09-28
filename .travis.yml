@@ -5,3 +5,7 @@ jdk:
   - oraclejdk8
 services:
   - redis-server
+
+cache:
+    directories:
+    - $HOME/.m2

@@ -5,7 +5,7 @@
     <groupId>org.jekh.appenders</groupId>
     <artifactId>redis-appender</artifactId>
 
-    <version>0.1-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
 
     <modules>
         <module>logback</module>

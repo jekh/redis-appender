@@ -8,6 +8,7 @@ import org.jekh.appenders.LogstashJsonFormatter;
 import org.jekh.appenders.exception.ExceptionUtil;
 import org.jekh.appenders.exception.LoggerInitializationException;
 import org.jekh.appenders.gson.GsonUtil;
+import org.jekh.appenders.jul.util.JULConfigUtil;
 import org.jekh.appenders.log.SimpleLog;
 
 import java.util.List;
@@ -79,16 +80,20 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
         configured = true;
     }
 
-    public void setLocationAsObject(boolean locationAsObject) {
-        this.locationAsObject = locationAsObject;
+    // like the setters in JBossRedisHandler, all properties are treated as strings to allow resolution of environment and system
+    // properties in jboss' bootstrap logging.properties file
+
+    public void setLocationAsObject(String locationAsObject) {
+        this.locationAsObject = Boolean.parseBoolean(JULConfigUtil.resolveSubstitutions(locationAsObject));
     }
 
-    public void setMdcAsObject(boolean mdcAsObject) {
-        this.mdcAsObject = mdcAsObject;
+    public void setMdcAsObject(String mdcAsObject) {
+        this.mdcAsObject = Boolean.parseBoolean(JULConfigUtil.resolveSubstitutions(mdcAsObject));
     }
 
     public void setAdditionalFieldsJson(String additionalFieldsJson) {
-        Map<String, String> additionalFields = GsonUtil.GSON.fromJson(additionalFieldsJson, GsonUtil.MAP_OF_STRING_STRING_TYPE);
+        String resolvedJson = JULConfigUtil.resolveSubstitutions(additionalFieldsJson);
+        Map<String, String> additionalFields = GsonUtil.GSON.fromJson(resolvedJson, GsonUtil.MAP_OF_STRING_STRING_TYPE);
         setAdditionalFields(additionalFields);
     }
 
@@ -101,7 +106,8 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     }
 
     public void setSuppressFieldsJson(String suppressFieldsJson) {
-        Set<Field> suppressFields = GsonUtil.GSON.fromJson(suppressFieldsJson, GsonUtil.SET_OF_FIELD_TYPE);
+        String resolvedJson = JULConfigUtil.resolveSubstitutions(suppressFieldsJson);
+        Set<Field> suppressFields = GsonUtil.GSON.fromJson(resolvedJson, GsonUtil.SET_OF_FIELD_TYPE);
         setSuppressFields(suppressFields);
     }
 
@@ -110,13 +116,15 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     }
 
     public void setMdcIncludeJson(String mdcIncludeJson) {
-        Set<String> set = GsonUtil.GSON.fromJson(mdcIncludeJson, GsonUtil.SET_OF_STRING_TYPE);
+        String resolvedJson = JULConfigUtil.resolveSubstitutions(mdcIncludeJson);
+        Set<String> set = GsonUtil.GSON.fromJson(resolvedJson, GsonUtil.SET_OF_STRING_TYPE);
         setMdcInclude(set);
 
     }
 
     public void setMdcExcludeJson(String mdcExcludeJson) {
-        Set<String> set = GsonUtil.GSON.fromJson(mdcExcludeJson, GsonUtil.SET_OF_STRING_TYPE);
+        String resolvedJson = JULConfigUtil.resolveSubstitutions(mdcExcludeJson);
+        Set<String> set = GsonUtil.GSON.fromJson(resolvedJson, GsonUtil.SET_OF_STRING_TYPE);
         setMdcExclude(set);
     }
 
@@ -125,7 +133,8 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     }
 
     public void setTagsJson(String tagsJson) {
-        List<String> list = GsonUtil.GSON.fromJson(tagsJson, GsonUtil.LIST_OF_STRING_TYPE);
+        String resolvedJson = JULConfigUtil.resolveSubstitutions(tagsJson);
+        List<String> list = GsonUtil.GSON.fromJson(resolvedJson, GsonUtil.LIST_OF_STRING_TYPE);
         setTags(list);
     }
 
@@ -134,54 +143,54 @@ public class JBossLogstashFormatter extends java.util.logging.Formatter {
     }
 
     public void setThread(String thread) {
-        fieldNamesBuilder.setThread(thread);
+        fieldNamesBuilder.setThread(JULConfigUtil.resolveSubstitutions(thread));
     }
 
     public void setLevel(String level) {
-        fieldNamesBuilder.setLevel(level);
+        fieldNamesBuilder.setLevel(JULConfigUtil.resolveSubstitutions(level));
     }
 
     public void setMessage(String message) {
-        fieldNamesBuilder.setMessage(message);
+        fieldNamesBuilder.setMessage(JULConfigUtil.resolveSubstitutions(message));
     }
 
     public void setLogger(String logger) {
-        fieldNamesBuilder.setLogger(logger);
+        fieldNamesBuilder.setLogger(JULConfigUtil.resolveSubstitutions(logger));
     }
 
     public void setException(String exception) {
-        fieldNamesBuilder.setException(exception);
+        fieldNamesBuilder.setException(JULConfigUtil.resolveSubstitutions(exception));
     }
 
     public void setLocation(String location) {
-        fieldNamesBuilder.setLocation(location);
+        fieldNamesBuilder.setLocation(JULConfigUtil.resolveSubstitutions(location));
     }
 
     public void setTimestamp(String timestamp) {
-        fieldNamesBuilder.setTimestamp(timestamp);
+        fieldNamesBuilder.setTimestamp(JULConfigUtil.resolveSubstitutions(timestamp));
     }
 
     public void setMdc(String mdc) {
-        fieldNamesBuilder.setMdc(mdc);
+        fieldNamesBuilder.setMdc(JULConfigUtil.resolveSubstitutions(mdc));
     }
 
     public void setClassField(String classField) {
-        fieldNamesBuilder.setClassField(classField);
+        fieldNamesBuilder.setClassField(JULConfigUtil.resolveSubstitutions(classField));
     }
 
     public void setMethod(String method) {
-        fieldNamesBuilder.setMethod(method);
+        fieldNamesBuilder.setMethod(JULConfigUtil.resolveSubstitutions(method));
     }
 
     public void setFile(String file) {
-        fieldNamesBuilder.setFile(file);
+        fieldNamesBuilder.setFile(JULConfigUtil.resolveSubstitutions(file));
     }
 
     public void setLine(String line) {
-        fieldNamesBuilder.setLine(line);
+        fieldNamesBuilder.setLine(JULConfigUtil.resolveSubstitutions(line));
     }
 
     public void setTagsField(String tagsField) {
-        fieldNamesBuilder.setTags(tagsField);
+        fieldNamesBuilder.setTags(JULConfigUtil.resolveSubstitutions(tagsField));
     }
 }

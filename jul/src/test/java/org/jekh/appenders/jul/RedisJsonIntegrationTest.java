@@ -164,4 +164,48 @@ public class RedisJsonIntegrationTest {
         // have to de-generify Matcher here because otherwise assertThat will expect Map<String, ? extends Iterable>, but we can only supply Map<String, Object>
         assertThat(loggedMessage, not(hasKey("tags")));
     }
+
+    @Test
+    public void testJULWithProperties() {
+        System.setProperty("SYSTEM_PROPERTY_1", "value from system property");
+
+        TestUtil.configLoggerFromPropertiesFile("/jul-properties.properties");
+
+        Logger logger = Logger.getLogger("testJULWithProperties");
+
+        logger.log(Level.FINE, "A simple test message", new RuntimeException("Test exception"));
+
+        // pause to allow the message to be sent to redis
+        TestUtil.pause(200);
+
+        String lastEntry = TestUtil.readLastRedisEntry("logstash");
+        assertThat("Could not read entry from redis", lastEntry, not(emptyOrNullString()));
+
+        Map<String, Object> loggedMessage = TestUtil.jsonToMap(lastEntry);
+
+        assertThat(loggedMessage, hasEntry("thread", "1"));
+        assertThat(loggedMessage, hasEntry("level", "FINE"));
+        assertThat(loggedMessage, hasKey("message"));
+        assertThat(loggedMessage, hasEntry("logger", "testJULWithProperties"));
+        assertThat(loggedMessage, hasKey("exception"));
+
+        // location is not in an object by default
+        assertThat(loggedMessage, not(hasKey("location")));
+        assertThat(loggedMessage, hasKey("class"));
+        assertThat(loggedMessage, hasKey("method"));
+//        assertThat(loggedMessage, hasKey("file"));
+        assertThat(loggedMessage, hasKey("line"));
+
+        assertThat(loggedMessage, hasKey("@timestamp"));
+
+        // make sure mdc fields are logged as well. mdc is not in an object by default.
+        assertThat(loggedMessage, not(hasKey("mdc")));
+        assertThat(loggedMessage, hasEntry("envProperty", "default environment property value"));
+        assertThat(loggedMessage, hasEntry("sysProperty", "value from system property"));
+        assertThat(loggedMessage, hasEntry("sysPropertyDefault", "default system property value"));
+
+        // have to de-generify Matcher here because otherwise assertThat will expect Map<String, ? extends Iterable>, but we can only supply Map<String, Object>
+        assertThat(loggedMessage, not(hasKey("tags")));
+    }
+
 }

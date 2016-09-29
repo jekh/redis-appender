@@ -58,7 +58,7 @@ public class JULRedisHandler extends RedisLoggingHandler {
         int maxMessagesPerPush = JULConfigUtil.getIntProperty(MAX_MESSAGES_PER_PUSH_PROPERTY, Defaults.MAX_MESSAGES_PER_PUSH);
         int logQueueSize = JULConfigUtil.getIntProperty(LOG_QUEUE_SIZE_PROPERTY, Defaults.LOG_QUEUE_SIZE);
         boolean debug = JULConfigUtil.getBooleanProperty(DEBUG_PROPERTY, false);
-        int maxThreadBlockTimeMs = JULConfigUtil.getIntProperty(MAX_MESSAGES_PER_PUSH_PROPERTY, Defaults.MAX_THREAD_BLOCK_TIME_MS);
+        int maxThreadBlockTimeMs = JULConfigUtil.getIntProperty(MAX_THREAD_BLOCK_TIME_PROPERTY, Defaults.MAX_THREAD_BLOCK_TIME_MS);
         int workerTimeoutMs = JULConfigUtil.getIntProperty(WORKER_TIMEOUT_PROPERTY, Defaults.WORKER_TIMEOUT_MS);
 
         Charset charset = Defaults.CHARSET;

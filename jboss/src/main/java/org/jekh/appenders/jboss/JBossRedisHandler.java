@@ -6,6 +6,7 @@ import org.jekh.appenders.client.RedisClientBuilder;
 import org.jekh.appenders.exception.ExceptionUtil;
 import org.jekh.appenders.exception.LoggerInitializationException;
 import org.jekh.appenders.jul.RedisLoggingHandler;
+import org.jekh.appenders.jul.util.JULConfigUtil;
 import org.jekh.appenders.log.SimpleLog;
 
 import java.nio.charset.Charset;
@@ -38,68 +39,72 @@ public class JBossRedisHandler extends RedisLoggingHandler {
     private int maxThreadBlockTimeMs = Defaults.MAX_THREAD_BLOCK_TIME_MS;
     private int workerTimeoutMs = Defaults.WORKER_TIMEOUT_MS;
 
+    // JBoss will resolve properties with substitutions (e.g. ${REDIS_HOST}) automatically when they are placed in standalone.xml,
+    // but not in the "bootstrap" logger configured in logging.properties. To allow property substitutions, all values are treated as
+    // strings and resolved using the JUL substitution resolver.
+
     public void setRedisKey(String redisKey) {
-        this.redisKey = redisKey;
+        this.redisKey = JULConfigUtil.resolveSubstitutions(redisKey);
     }
 
     public void setHost(String host) {
-        this.host = host;
+        this.host = JULConfigUtil.resolveSubstitutions(host);
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setPort(String port) {
+        this.port = Integer.parseInt(JULConfigUtil.resolveSubstitutions(port));
     }
 
-    public void setTimeoutMs(int timeoutMs) {
-        this.timeoutMs = timeoutMs;
+    public void setTimeoutMs(String timeoutMs) {
+        this.timeoutMs = Integer.parseInt(JULConfigUtil.resolveSubstitutions(timeoutMs));
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = JULConfigUtil.resolveSubstitutions(password);
     }
 
-    public void setDatabase(int database) {
-        this.database = database;
+    public void setDatabase(String database) {
+        this.database = Integer.parseInt(JULConfigUtil.resolveSubstitutions(database));
     }
 
     public void setClientName(String clientName) {
-        this.clientName = clientName;
+        this.clientName = JULConfigUtil.resolveSubstitutions(clientName);
     }
 
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
+    public void setSynchronous(String synchronous) {
+        this.synchronous = Boolean.parseBoolean(JULConfigUtil.resolveSubstitutions(synchronous));
     }
 
-    public void setRedisPushThreads(int redisPushThreads) {
-        this.redisPushThreads = redisPushThreads;
+    public void setRedisPushThreads(String redisPushThreads) {
+        this.redisPushThreads = Integer.parseInt(JULConfigUtil.resolveSubstitutions(redisPushThreads));
     }
 
-    public void setMaxMessagesPerPush(int maxMessagesPerPush) {
-        this.maxMessagesPerPush = maxMessagesPerPush;
+    public void setMaxMessagesPerPush(String maxMessagesPerPush) {
+        this.maxMessagesPerPush = Integer.parseInt(JULConfigUtil.resolveSubstitutions(maxMessagesPerPush));
     }
 
-    public void setLogQueueSize(int logQueueSize) {
-        this.logQueueSize = logQueueSize;
+    public void setLogQueueSize(String logQueueSize) {
+        this.logQueueSize = Integer.parseInt(JULConfigUtil.resolveSubstitutions(logQueueSize));
     }
 
-    public void setTls(boolean tls) {
-        this.tls = tls;
+    public void setTls(String tls) {
+        this.tls = Boolean.parseBoolean(JULConfigUtil.resolveSubstitutions(tls));
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
+    public void setDebug(String debug) {
+        this.debug = Boolean.parseBoolean(JULConfigUtil.resolveSubstitutions(debug));
     }
 
     public void setCharset(String charset) {
-        this.charset = Charset.forName(charset);
+        this.charset = Charset.forName(JULConfigUtil.resolveSubstitutions((charset)));
     }
 
-    public void setMaxThreadBlockTimeMs(int maxThreadBlockTimeMs) {
-        this.maxThreadBlockTimeMs = maxThreadBlockTimeMs;
+    public void setMaxThreadBlockTimeMs(String maxThreadBlockTimeMs) {
+        this.maxThreadBlockTimeMs = Integer.parseInt(JULConfigUtil.resolveSubstitutions(maxThreadBlockTimeMs));
     }
 
-    public void setWorkerTimeoutMs(int workerTimeoutMs) {
-        this.workerTimeoutMs = workerTimeoutMs;
+    public void setWorkerTimeoutMs(String workerTimeoutMs) {
+        this.workerTimeoutMs = Integer.parseInt(JULConfigUtil.resolveSubstitutions(workerTimeoutMs));
     }
 
     public JBossRedisHandler() {
@@ -167,4 +172,5 @@ public class JBossRedisHandler extends RedisLoggingHandler {
 
         configured = true;
     }
+
 }

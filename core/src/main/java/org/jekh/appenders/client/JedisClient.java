@@ -66,7 +66,13 @@ public class JedisClient implements RedisClient {
                        String clientName, Charset charset, int threads, int logBatchSize, int maxLogQueueSize,
                        int maxThreadBlockTimeMs, int workerTimeoutMs, boolean debug) {
         if (debug) {
-            SimpleLog.debug("Creating asynchronous JedisClient with " + threads + " threads");
+            SimpleLog.debug("Creating asynchronous JedisClient with " + threads + " threads connecting to redis at " + host + ":" + port
+                    + " (database=" + database + ", redisKey=" + redisKey + ", clientName=" + clientName + ", charset=" + charset
+                    + ", password=" + (password == null ? "null" : "[hidden]") + ", socket and connection timeout=" + timeout + "ms"
+                    + ", max log messages per push to redis=" + logBatchSize + ", max log messages to queue=" + maxLogQueueSize
+                    + ", max app thread block time=" + (maxThreadBlockTimeMs == Integer.MAX_VALUE ? "indefinite" : maxThreadBlockTimeMs + "ms")
+                    + ", redis push timeout=" + (workerTimeoutMs == Integer.MAX_VALUE ? "indefinite" : workerTimeoutMs + "ms")
+                    + ")");
         }
 
         this.redisKeyAsBytes = redisKey.getBytes(charset);
@@ -101,7 +107,11 @@ public class JedisClient implements RedisClient {
     public JedisClient(String redisKey, String host, int port, boolean tls, int timeout, String password, int database,
                        String clientName, Charset charset, int maxThreadBlockTimeMs, boolean debug) {
         if (debug) {
-            SimpleLog.debug("Creating synchronous JedisClient");
+            SimpleLog.debug("Creating synchronous JedisClient connecting to redis at " + host + ":" + port
+                    + " (database=" + database + ", redisKey=" + redisKey + ", clientName=" + clientName + ", charset=" + charset
+                    + ", password=" + (password == null ? "null" : "[hidden]") + ", socket and connection timeout=" + timeout + "ms"
+                    + ", max app thread block time=" + (maxThreadBlockTimeMs == Integer.MAX_VALUE ? "indefinite" : maxThreadBlockTimeMs + "ms")
+                    + ")");
         }
 
         this.redisKeyAsBytes = redisKey.getBytes(charset);

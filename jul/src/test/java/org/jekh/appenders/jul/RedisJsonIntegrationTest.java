@@ -208,4 +208,46 @@ public class RedisJsonIntegrationTest {
         assertThat(loggedMessage, not(hasKey("tags")));
     }
 
+    @Test
+    public void testJULSynchronous() {
+        TestUtil.configLoggerFromPropertiesFile("/jul-synchronous.properties");
+
+        Logger logger = Logger.getLogger("testJULSynchronous");
+
+        MDC.put("keyOne", "valueOne");
+        MDC.put("keyTwo", "valueTwo");
+
+        logger.log(Level.FINE, "A simple test message", new RuntimeException("Test exception"));
+
+        // pause to allow the message to be sent to redis
+        TestUtil.pause(200);
+
+        String lastEntry = TestUtil.readLastRedisEntry("logstash");
+        assertThat("Could not read entry from redis", lastEntry, not(emptyOrNullString()));
+
+        Map<String, Object> loggedMessage = TestUtil.jsonToMap(lastEntry);
+
+        assertThat(loggedMessage, hasEntry("thread", "1")); // JUL only exposes the thread ID, not the thread name
+        assertThat(loggedMessage, hasEntry("level", "FINE"));
+        assertThat(loggedMessage, hasKey("message"));
+        assertThat(loggedMessage, hasEntry("logger", "testJULSynchronous"));
+        assertThat(loggedMessage, hasKey("exception"));
+
+        // location is not in an object by default
+        assertThat(loggedMessage, not(hasKey("location")));
+        assertThat(loggedMessage, hasKey("class"));
+        assertThat(loggedMessage, hasKey("method"));
+//        assertThat(loggedMessage, hasKey("file")); // JUL doesn't expose access to the file
+        assertThat(loggedMessage, hasKey("line"));
+
+        assertThat(loggedMessage, hasKey("@timestamp"));
+
+        // make sure mdc fields are logged as well. mdc is not in an object by default.
+        assertThat(loggedMessage, not(hasKey("mdc")));
+        assertThat(loggedMessage, hasEntry("keyOne", "valueOne"));
+        assertThat(loggedMessage, hasEntry("keyTwo", "valueTwo"));
+
+        // have to de-generify Matcher here because otherwise assertThat will expect Map<String, ? extends Iterable>, but we can only supply Map<String, Object>
+        assertThat(loggedMessage, not(hasKey("tags")));
+    }
 }

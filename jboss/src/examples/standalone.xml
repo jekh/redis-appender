@@ -1,0 +1,69 @@
+<profile>
+    <subsystem xmlns="urn:jboss:domain:logging:1.5">
+        <custom-handler name="RedisAppender"
+                        class="org.jekh.appenders.jboss.JBossRedisHandler"
+                        module="org.jekh.appenders">
+            <level name="INFO"/>
+            <formatter>
+                <named-formatter name="LogstashFormatter"/>
+            </formatter>
+
+            <properties>
+                <!-- to use the default value for any setting or field name, simply omit the property -->
+                <!-- use standard jboss property substitution in the standalone.xml file -->
+                <property name="host" value="${env.REDIS_HOST}"/>
+                <property name="port" value="6379"/>
+                <property name="redisKey" value="logstash"/>
+                <property name="debug" value="false"/>
+                <property name="timeoutMs" value="2000"/>
+                <property name="password" value="password"/>
+                <property name="database" value="0"/>
+                <property name="clientName" value="clientname"/>
+                <property name="tls" value="false"/>
+                <property name="synchronous" value="false"/>
+                <property name="redisPushThreads" value="5"/>
+                <property name="maxMessagesPerPush" value="100"/>
+                <property name="logQueueSize" value="100000"/>
+                <property name="charset" value="UTF-8"/>
+                <property name="maxThreadBlockTimeMs" value="-1"/>
+                <property name="workerTimeoutMs" value="-1"/>
+            </properties>
+        </custom-handler>
+        <formatter name="LogstashFormatter">
+            <custom-formatter module="org.jekh.appenders" class="org.jekh.appenders.jboss.JBossLogstashFormatter">
+                <properties>
+                    <!-- JBoss only supports property values in attributes, so escape all json and place it in the value attribute-->
+                    <property name="tagsJson" value="[&quot;logtag&quot;]"/>
+
+                    <property name="mdcIncludeJson" value="[&quot;includedkey&quot;]"/>
+                    <property name="mdcExcludeJson" value="[&quot;excludedkey&quot;]"/>
+
+                    <property name="additionalFieldsJson" value="{&quot;type&quot;:&quot;server&quot;}"/>
+                    <property name="mdcAsObject" value="true"/>
+                    <property name="locationAsObject" value="true"/>
+                    <property name="suppressFieldsJson" value="[&quot;location&quot;]"/>
+
+                    <property name="thread" value="thread"/>
+                    <property name="level" value="level"/>
+                    <property name="message" value="message"/>
+                    <property name="logger" value="logger"/>
+                    <property name="exception" value="exception"/>
+                    <property name="location" value="location"/>
+                    <property name="timestamp" value="timestamp"/>
+                    <property name="classField" value="class"/>
+                    <property name="method" value="method"/>
+                    <property name="file" value="file"/>
+                    <property name="line" value="line"/>
+                    <property name="tagsField" value="tags"/>
+                    <property name="mdc" value="mdc"/>
+                </properties>
+            </custom-formatter>
+        </formatter>
+        <root-logger>
+            <level name="INFO"/>
+            <handlers>
+                <handler name="RedisAppender"/>
+            </handlers>
+        </root-logger>
+    </subsystem>
+</profile>

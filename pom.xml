@@ -11,6 +11,7 @@
     <description>Appenders for popular logging frameworks that send logs directly to Redis, with an focus on
         logstash-friendly json log messages.
     </description>
+    <url>https://github.com/jekh/redis-appender</url>
 
     <modules>
         <module>logback</module>

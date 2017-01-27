@@ -3,9 +3,10 @@ package org.jekh.appenders.client;
 import org.jekh.appenders.Defaults;
 import org.jekh.appenders.exception.ExceptionUtil;
 import org.jekh.appenders.log.SimpleLog;
-import org.vibur.objectpool.ConcurrentLinkedPool;
+import org.vibur.objectpool.ConcurrentPool;
 import org.vibur.objectpool.PoolObjectFactory;
 import org.vibur.objectpool.PoolService;
+import org.vibur.objectpool.util.ConcurrentLinkedQueueCollection;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -191,13 +192,13 @@ public class JedisClient implements RedisClient {
     @Override
     public void start() {
         if (synchronous) {
-            jedisPool = new ConcurrentLinkedPool<>(new JedisObjectFactory(),
+            jedisPool = new ConcurrentPool<>(new ConcurrentLinkedQueueCollection<>(), new JedisObjectFactory(),
                     Defaults.INITIAL_SYNC_CLIENT_POOL_SIZE,
                     Defaults.MAX_SYNC_CLIENT_POOL_SIZE,
                     false);
         } else {
             // create the jedis pool with an initial size of 0, to prevent the pool from failing if redis is currently down
-            jedisPool = new ConcurrentLinkedPool<>(new JedisObjectFactory(),
+            new ConcurrentPool<>(new ConcurrentLinkedQueueCollection<>(), new JedisObjectFactory(),
                     0,
                     threads,
                     false);

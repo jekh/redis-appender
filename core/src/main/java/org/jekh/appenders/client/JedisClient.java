@@ -196,9 +196,9 @@ public class JedisClient implements RedisClient {
                     Defaults.MAX_SYNC_CLIENT_POOL_SIZE,
                     false);
         } else {
-            // create the jedis pool with one client per worker thread
+            // create the jedis pool with an initial size of 0, to prevent the pool from failing if redis is currently down
             jedisPool = new ConcurrentLinkedPool<>(new JedisObjectFactory(),
-                    threads,
+                    0,
                     threads,
                     false);
 
@@ -251,7 +251,7 @@ public class JedisClient implements RedisClient {
 
     /**
      * Encapsulates the code to push log messages to redis asynchronously. The run() method will continue to push log messages
-     * to redis until the {@link #stopped} field is set to false.
+     * to redis until the {@link #stopped} field is set to true.
      */
     private class PushToRedisWorker implements Runnable {
         @Override
